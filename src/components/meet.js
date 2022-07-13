@@ -1,17 +1,163 @@
 import React, {useEffect, useState, useRef}from 'react'
 import { Button } from '@material-ui/core'
-import IconButton from '@material-ui/core'
-import TextField from '@material-ui/core'
+import { IconButton } from '@material-ui/core'
+import { TextField } from '@material-ui/core'
 import { FileCopy } from '@material-ui/icons'
 import { PhoneIphone } from '@material-ui/icons'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import SimplePeer from 'simple-peer'
 import { io } from 'socket.io-client'
+import './meet.css'
 
-function meet() {
+const socket = io.connect("http://localhost:500")
+
+function Meet() {
+  const [ me, setMe ] = useState("")
+	const [ stream, setStream ] = useState()
+	const [ receivingCall, setReceivingCall ] = useState(false)
+	const [ caller, setCaller ] = useState("")
+	const [ callerSignal, setCallerSignal ] = useState()
+	const [ callAccepted, setCallAccepted ] = useState(false)
+	const [ idToCall, setIdToCall ] = useState("")
+	const [ callEnded, setCallEnded] = useState(false)
+	const [ name, setName ] = useState("")
+	const myVideo = useRef()
+	const userVideo = useRef()
+	const connectionRef= useRef()
+
+  useEffect(() => {
+		navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+			setStream(stream)
+				myVideo.current.srcObject = stream
+		})
+
+	socket.on("me", (id) => {
+			setMe(id)
+		})
+
+		socket.on("callUser", (data) => {
+			setReceivingCall(true)
+			setCaller(data.from)
+			setName(data.name)
+			setCallerSignal(data.signal)
+		})
+	}, [])
+
+  const callUser = (id) => {
+    const peer = new SimplePeer({
+      initiator: true,
+      trickle: false,
+      stream: stream
+    })
+    peer.on("signal", (data) => {
+      socket.emit("calluser", {
+        userTocall: id,
+        signalData: data,
+        from: me,
+        name: name
+      })
+    })
+
+    peer.on("stream", (stream) => {
+      userVideo.current.srcObject = stream
+    })
+
+    socket.on("callAccepted", (signal) => {
+      setCallAccepted(true)
+      peer.signal(signal)
+    })
+
+    connectionRef.current = peer
+  }
+
+  const asnwerCall =() => {
+    setCallAccepted(true)
+    const peer = new SimplePeer({
+      initiator: true,
+      trickle: false,
+      stream: stream
+    })
+
+    peer.on("signal",(data) => {
+      socket.emit("answerCall", {signal: data, to:caller})
+    })
+    
+    peer.on("stream", (stream) => {
+      userVideo.current.srcObject = stream
+    })
+
+    peer.signal(callerSignal)
+    connectionRef.current = peer
+  }
+
+  const leaveCall = () =>{
+    setCallEnded(true)
+    connectionRef.current.destroy()
+  }
+
   return (
-    <div>meet</div>
+    <>
+    <h1 style={{textAlign: "center", padding: "10px"}}>Consultation</h1>
+    <div className='container'>
+      <div className='video-container'>
+        {stream && <video playsInline muted ref={myVideo} autoPlay style={{width: "500px"}}/>} 
+      </div>
+      <div className='video'>
+        {callAccepted && !callEnded?
+        <video playsInline ref={userVideo} autoplay style={{width: "300px"}} />: null}
+      </div>
+    </div>
+    
+    <div className="myId">
+				<TextField
+					id="filled-basic"
+					label="Name"
+					variant="filled"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					style={{ marginBottom: "20px" }}
+				/>
+				<CopyToClipboard text={me} style={{ marginBottom: "2rem" }}>
+					<Button variant="contained" color="black" startIcon={<FileCopy fontSize="large" />}>
+						Copy ID
+					</Button>
+				</CopyToClipboard>
+
+				<TextField
+					id="filled-basic"
+					label="ID to call"
+					variant="filled"
+					value={idToCall}
+					onChange={(e) => setIdToCall(e.target.value)}
+				/>
+				<div className="call-button">
+					{callAccepted && !callEnded ? (
+						<Button variant="contained" color="black" onClick={leaveCall}>
+							End Call
+						</Button>
+					) : (
+						<IconButton color="black" aria-label="call" onClick={() => callUser(idToCall)}>
+							<PhoneIphone fontSize="large" />
+						</IconButton>
+					)}
+					{idToCall}
+				</div>
+			</div>
+      <div>
+				{receivingCall && !callAccepted ? (
+						<div className="caller">
+						<h1 >{name} is calling...</h1>
+						<Button variant="contained" color="primary" onClick={asnwerCall}>
+							Answer
+						</Button>
+					</div>
+				) : null}
+			</div>
+
+	
+
+    </>
   )
 }
 
-export default meet
+export default Meet

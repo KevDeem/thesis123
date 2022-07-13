@@ -1,12 +1,14 @@
 import React from 'react'
 import Nav from '../components/nav'
-import meet from '../components/meet'
+import Meet from '../components/meet'
+import Section3 from '../components/section-3'
 
 function Meetpage() {
     return (
       <div>
         <Nav/>
-        <meet/>
+        <Meet/>
+        <Section3/>
       </div>
 
     )

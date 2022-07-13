@@ -14,7 +14,7 @@ export default () => (
             src={require("../assets/photo-1519720842496-c64a0d0627f9.jfif")}
             alt=""
           />
-          <h3>batuk</h3>
+          <h3>Batuk</h3>
           <p>
           </p>
         </Col>
@@ -23,49 +23,49 @@ export default () => (
             src={require("../assets/picture.jpg")}
             alt="../assets/picture.jpg"
           />
-          <h3>pilek</h3>
+          <h3>Bersin</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/picture.jpg")}
             alt=""
           />
-          <h3>jelek</h3>
+          <h3>Demam</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/picture.jpg")}
             alt=""
           />
-          <h3>Lorem Ipsum</h3>
+          <h3>Dokter</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/picture.jpg")}
             alt=""
           />
-          <h3>Lorem Ipsum</h3>
+          <h3>Masker</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/picture.jpg")}
             alt=""
           />
-          <h3>Lorem Ipsum</h3>
+          <h3>Mual</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/picture.jpg")}
             alt=""
           />
-          <h3>Lorem Ipsum</h3>
+          <h3>Obat</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/picture.jpg")}
             alt=""
           />
-          <h3>Lorem Ipsum</h3>
+          <h3>Pilek</h3>
         </Col>
         <Col md="6" lg="3" className="d-none d-lg-block">
         </Col>
@@ -73,13 +73,13 @@ export default () => (
           <img
             src={require("../assets/photo-1519720842496-c64a0d0627f9.jfif")}            alt=""
           />
-          <h3>kucing</h3>
+          <h3>Pusing</h3>
         </Col>
         <Col md="6" lg="3" className="s3__box-item">
           <img
             src={require("../assets/photo-1519720842496-c64a0d0627f9.jfif")}            alt=""
           />
-          <h3>kucing</h3>
+          <h3>Sakit</h3>
         </Col>
       </Row>
     </Container>
