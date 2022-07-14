@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef}from 'react'
-import { Button } from '@material-ui/core'
+import { Button, Icon } from '@material-ui/core'
 import { IconButton } from '@material-ui/core'
 import { TextField } from '@material-ui/core'
 import { FileCopy } from '@material-ui/icons'
@@ -100,15 +100,15 @@ function Meet() {
     <h1 style={{textAlign: "center", padding: "10px"}}>Consultation</h1>
     <div className='container'>
       <div className='video-container'>
-        {stream && <video playsInline muted ref={myVideo} autoPlay style={{width: "500px"}}/>} 
-      </div>
-      <div className='video'>
+		<div className='video'>
+		{stream && <video playsInline muted ref={myVideo} autoPlay style={{width: "500px"}}/>} 
+		</div>
+		<div className='video'>
         {callAccepted && !callEnded?
         <video playsInline ref={userVideo} autoplay style={{width: "300px"}} />: null}
       </div>
-    </div>
-    
-    <div className="myId">
+      </div>
+	  <div className="myId">
 				<TextField
 					id="filled-basic"
 					label="Name"
@@ -117,45 +117,43 @@ function Meet() {
 					onChange={(e) => setName(e.target.value)}
 					style={{ marginBottom: "20px" }}
 				/>
-				<CopyToClipboard text={me} style={{ marginBottom: "2rem" }}>
-					<Button variant="contained" color="black" startIcon={<FileCopy fontSize="large" />}>
+				<CopyToClipboard text={me} style={{marginBottom: "2rem"}}>
+					<Button variant ="contained" color="black" startIcon = {<FileCopy fontsize="large"/>}>
 						Copy ID
 					</Button>
 				</CopyToClipboard>
-
 				<TextField
-					id="filled-basic"
-					label="ID to call"
-					variant="filled"
-					value={idToCall}
-					onChange={(e) => setIdToCall(e.target.value)}
+				id="filled-basic"
+				label="ID to call"
+				variant='filled'
+				value={idToCall}
+				onChange= {(e) => setIdToCall(e.target.value)}
 				/>
-				<div className="call-button">
+				<div className='call-button'>
 					{callAccepted && !callEnded ? (
 						<Button variant="contained" color="black" onClick={leaveCall}>
-							End Call
+							End call
 						</Button>
-					) : (
-						<IconButton color="black" aria-label="call" onClick={() => callUser(idToCall)}>
-							<PhoneIphone fontSize="large" />
+					): (
+						<IconButton color="black" aria-label='call' onClick={() => callUser(idToCall)}>
+							<PhoneIphone fontsize="large"/>
 						</IconButton>
 					)}
 					{idToCall}
 				</div>
-			</div>
-      <div>
-				{receivingCall && !callAccepted ? (
-						<div className="caller">
-						<h1 >{name} is calling...</h1>
-						<Button variant="contained" color="primary" onClick={asnwerCall}>
-							Answer
-						</Button>
-					</div>
-				) : null}
-			</div>
 
-	
-
+		</div>
+		<div>
+			{receivingCall && !callAccepted ? (
+				<div>
+					<h1> {name} is calling...</h1>
+					<Button variant="contained" color="black" onClick={asnwerCall}>
+						Answer
+					</Button>
+				</div>
+			): null}
+		</div>
+    </div>
     </>
   )
 }
