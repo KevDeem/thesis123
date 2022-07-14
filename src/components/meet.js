@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef}from 'react'
-import { Button, Icon } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import { IconButton } from '@material-ui/core'
 import { TextField } from '@material-ui/core'
 import { FileCopy } from '@material-ui/icons'
@@ -9,8 +9,7 @@ import SimplePeer from 'simple-peer'
 import { io } from 'socket.io-client'
 import './meet.css'
 
-const socket = io.connect("http://localhost:500")
-
+const socket = io.connect('http://localhost:5000')
 function Meet() {
   const [ me, setMe ] = useState("")
 	const [ stream, setStream ] = useState()
@@ -44,55 +43,50 @@ function Meet() {
 	}, [])
 
   const callUser = (id) => {
-    const peer = new SimplePeer({
-      initiator: true,
-      trickle: false,
-      stream: stream
-    })
-    peer.on("signal", (data) => {
-      socket.emit("calluser", {
-        userTocall: id,
-        signalData: data,
-        from: me,
-        name: name
-      })
-    })
+	const peer = new SimplePeer({
+		initiator: true,
+		trickle: false,
+		stream: stream
+	})
+	peer.on("signal", (data) => {
+		socket.emit("callUser", {
+			userToCall:id,
+			signalData: data,
+			from: me,
+			name: name
+		})
+	})
+	peer.on("stream", (stream) =>{
+		userVideo.current.srcObject = stream
+	})
+	socket.on("callAccepted", (signal) => {
+		setCallAccepted(true)
+		peer.signal(signal)
+	})
 
-    peer.on("stream", (stream) => {
-      userVideo.current.srcObject = stream
-    })
-
-    socket.on("callAccepted", (signal) => {
-      setCallAccepted(true)
-      peer.signal(signal)
-    })
-
-    connectionRef.current = peer
+	connectionRef.current = peer
   }
 
-  const asnwerCall =() => {
-    setCallAccepted(true)
-    const peer = new SimplePeer({
-      initiator: true,
-      trickle: false,
-      stream: stream
-    })
+  const asnwerCall = () => {
+	setCallAccepted(true)
+	const peer = SimplePeer({
+		initiator: false,
+		trickle: false,
+		stream: stream
+	})
+	peer.on("signal", (data) => {
+		socket.emit("asnwerCall", {signal: data, to: caller})
+	})
+	peer.on("stream", (stream) => {
+		userVideo.current.srcObject = stream
+	})
 
-    peer.on("signal",(data) => {
-      socket.emit("answerCall", {signal: data, to:caller})
-    })
-    
-    peer.on("stream", (stream) => {
-      userVideo.current.srcObject = stream
-    })
-
-    peer.signal(callerSignal)
-    connectionRef.current = peer
+	peer.signal(callerSignal)
+	connectionRef.current = peer
   }
-
-  const leaveCall = () =>{
-    setCallEnded(true)
-    connectionRef.current.destroy()
+  const leaveCall = () => {
+	setCallEnded(true)
+	connectionRef.current.destroy()
   }
 
   return (
@@ -104,9 +98,11 @@ function Meet() {
 		{stream && <video playsInline muted ref={myVideo} autoPlay style={{width: "500px"}}/>} 
 		</div>
 		<div className='video'>
-        {callAccepted && !callEnded?
-        <video playsInline ref={userVideo} autoplay style={{width: "300px"}} />: null}
-      </div>
+			{callAccepted && !callEnded ?
+			<video playsInline ref={userVideo} autoPlay style={{width: "500px"}} />
+			: null}
+
+		</div>
       </div>
 	  <div className="myId">
 				<TextField
