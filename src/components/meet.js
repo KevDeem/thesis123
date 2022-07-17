@@ -11,36 +11,34 @@ import './meet.css'
 
 const socket = io.connect('http://localhost:5000')
 function Meet() {
-  const [ me, setMe ] = useState("")
-	const [ stream, setStream ] = useState()
-	const [ receivingCall, setReceivingCall ] = useState(false)
-	const [ caller, setCaller ] = useState("")
-	const [ callerSignal, setCallerSignal ] = useState()
-	const [ callAccepted, setCallAccepted ] = useState(false)
-	const [ idToCall, setIdToCall ] = useState("")
-	const [ callEnded, setCallEnded] = useState(false)
-	const [ name, setName ] = useState("")
+	const [me, setMe] = useState("")
+	const [stream, setStream] = useState()
+	const [receivingCall, setReceivingCall] = useState(false)
+	const [caller, setCaller] = useState("")
+	const [callerSignal, setCallerSignal] = useState()
+	const [callAccepted, setCallAccepted] = useState(false)
+	const [idToCall, setIdToCall] = useState("")
+	const [callEnded, setCallEnded] = useState(false)
+	const [name, setName] = useState("")
 	const myVideo = useRef()
 	const userVideo = useRef()
-	const connectionRef= useRef()
+	const connectionRef = useRef()
 
   useEffect(() => {
-		navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-			setStream(stream)
-				myVideo.current.srcObject = stream
-		})
-
-	socket.on("me", (id) => {
-			setMe(id)
-		})
-
-		socket.on("callUser", (data) => {
-			setReceivingCall(true)
-			setCaller(data.from)
-			setName(data.name)
-			setCallerSignal(data.signal)
-		})
-	}, [])
+	navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(stream => {
+		setStream(stream)
+			myVideo.current.srcObject = stream
+	})
+	socket.on("me", (id) =>{
+		setMe(id)
+	})
+	socket.on("callUser", (data) => {
+		setReceivingCall(true)
+		setCaller(data.from)
+		setName(data.name)
+		setCallerSignal(data.signal)
+	})
+  	},[])
 
   const callUser = (id) => {
 	const peer = new SimplePeer({
@@ -56,8 +54,10 @@ function Meet() {
 			name: name
 		})
 	})
-	peer.on("stream", (stream) =>{
+	peer.on("stream", (stream) => {
+
 		userVideo.current.srcObject = stream
+
 	})
 	socket.on("callAccepted", (signal) => {
 		setCallAccepted(true)
@@ -98,10 +98,9 @@ function Meet() {
 		{stream && <video playsInline muted ref={myVideo} autoPlay style={{width: "500px"}}/>} 
 		</div>
 		<div className='video'>
-			{callAccepted && !callEnded ?
-			<video playsInline ref={userVideo} autoPlay style={{width: "500px"}} />
-			: null}
-
+			{callAccepted && !callEnded ? 
+			<video playsInline ref={userVideo} autoPlay style={{width: "500px"}}/>: 
+			null}
 		</div>
       </div>
 	  <div className="myId">
@@ -137,7 +136,6 @@ function Meet() {
 					)}
 					{idToCall}
 				</div>
-
 		</div>
 		<div>
 			{receivingCall && !callAccepted ? (
