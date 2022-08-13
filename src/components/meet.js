@@ -24,27 +24,27 @@ function Meet() {
 	const userVideo = useRef()
 	const connectionRef = useRef()
 
-  useEffect(() => {
-	navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(stream => {
-		setStream(stream)
-			myVideo.current.srcObject = stream
-	})
-	socket.on("me", (id) =>{
-		setMe(id)
-	})
-	socket.on("callUser", (data) => {
-		setReceivingCall(true)
-		setCaller(data.from)
-		setName(data.name)
-		setCallerSignal(data.signal)
-	})
+  	useEffect(() => {
+		navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(stream => {
+			setStream(stream)
+				myVideo.current.srcObject = stream
+		})
+		socket.on("me", (id) =>{
+			setMe(id)
+		})
+		socket.on("callUser", (data) => {
+			setReceivingCall(true)
+			setCaller(data.from)
+			setName(data.name)
+			setCallerSignal(data.signal)
+		})
   	},[])
 
-  const callUser = (id) => {
-	const peer = new SimplePeer({
-		initiator: true,
-		trickle: false,
-		stream: stream
+  	const callUser = (id) => {
+		const peer = new SimplePeer({
+			initiator: true,
+			trickle: false,
+			stream: stream
 	})
 	peer.on("signal", (data) => {
 		socket.emit("callUser", {
@@ -56,7 +56,7 @@ function Meet() {
 	})
 	peer.on("stream", (stream) => {
 
-		userVideo.current.srcObject = stream
+			userVideo.current.srcObject = stream
 
 	})
 	socket.on("callAccepted", (signal) => {
@@ -67,12 +67,12 @@ function Meet() {
 	connectionRef.current = peer
   }
 
-  const asnwerCall = () => {
-	setCallAccepted(true)
-	const peer = SimplePeer({
-		initiator: false,
-		trickle: false,
-		stream: stream
+  	const asnwerCall = () => {
+		setCallAccepted(true)
+		const peer = SimplePeer({
+			initiator: false,
+			trickle: false,
+			stream: stream
 	})
 	peer.on("signal", (data) => {
 		socket.emit("asnwerCall", {signal: data, to: caller})
@@ -84,6 +84,7 @@ function Meet() {
 	peer.signal(callerSignal)
 	connectionRef.current = peer
   }
+
   const leaveCall = () => {
 	setCallEnded(true)
 	connectionRef.current.destroy()
