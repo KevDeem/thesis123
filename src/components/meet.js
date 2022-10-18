@@ -9,6 +9,7 @@ import SimplePeer from 'simple-peer'
 import { io } from 'socket.io-client'
 import './meet.css'
 
+
 const socket = io.connect('http://localhost:5000')
 function Meet() {
 	const [me, setMe] = useState("")
@@ -29,9 +30,11 @@ function Meet() {
 			setStream(stream)
 				myVideo.current.srcObject = stream
 		})
+
 		socket.on("me", (id) =>{
 			setMe(id)
 		})
+
 		socket.on("callUser", (data) => {
 			setReceivingCall(true)
 			setCaller(data.from)
@@ -65,7 +68,7 @@ function Meet() {
 	})
 
 	connectionRef.current = peer
-  }
+	}
 
   	const asnwerCall = () => {
 		setCallAccepted(true)
@@ -118,6 +121,7 @@ function Meet() {
 						Copy ID
 					</Button>
 				</CopyToClipboard>
+				
 				<TextField
 				id="filled-basic"
 				label="ID to call"
