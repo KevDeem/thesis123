@@ -102,9 +102,9 @@ function Meet() {
 		{stream && <video playsInline muted ref={myVideo} autoPlay style={{width: "500px"}}/>} 
 		</div>
 		<div className='video'>
-			{callAccepted && !callEnded ? 
-			<video playsInline ref={userVideo} autoPlay style={{width: "500px"}}/>: 
-			null}
+				{callAccepted && !callEnded ? 
+				<video playsInline ref={userVideo} autoPlay style={{width: "500px"}}/>: 
+				null}
 		</div>
       </div>
 	  <div className="myId">
@@ -139,7 +139,7 @@ function Meet() {
 							<PhoneIphone fontsize="large"/>
 						</IconButton>
 					)}
-					{idToCall}
+			
 				</div>
 		</div>
 		<div>

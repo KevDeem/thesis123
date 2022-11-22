@@ -1,7 +1,7 @@
 const express = require("express")
 const http = require("http")
-const app = express()
-const server = http.createServer(app)
+const meet = express()
+const server = http.createServer(meet)
 const io = require("socket.io")(server, {
 	cors: {
 		origin: "http://localhost:3000",
@@ -9,10 +9,8 @@ const io = require("socket.io")(server, {
 	}
 })
 
-
 io.on("connection", (socket) => {
 	socket.emit("me", socket.id)
-    
 
 	socket.on("disconnect", () => {
 		socket.broadcast.emit("callEnded")
@@ -27,4 +25,4 @@ io.on("connection", (socket) => {
 	})
 })
 
-server.listen(5000, () => console.log("server is running on port 5000"))
+server.listen(5000, () => console.log("server is running on port 5000"))     
